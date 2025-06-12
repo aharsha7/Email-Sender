@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Email Sender</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    label { display: block; margin: 10px 0 5px; }
+    input, textarea { width: 100%; padding: 8px; }
+    button { margin-top: 15px; padding: 10px 15px; }
+  </style>
+</head>
+<body>
+  <h2>Send Email via Gmail</h2>
+  <form id="emailForm">
+    <label for="from">From (Gmail)</label>
+    <input type="email" name="from" id="from" required value="aharsha722001@gmail.com" />
+
+    <label for="to">To (Gmail)</label>
+    <input type="email" name="to" id="to" required />
+
+    <label for="subject">Subject</label>
+    <input type="text" name="subject" id="subject" required />
+
+    <label for="text">Message</label>
+    <textarea name="text" id="text" rows="5" required></textarea>
+
+    <label for="attachment">Attachment</label>
+    <input type="file" name="attachment" id="attachment" />
+
+    <button type="submit">Send Email</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const form = document.getElementById('emailForm');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = "Sending...";
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('/api/mail/send', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          status.textContent = data.message;
+          form.reset();
+        } else {
+          status.textContent = "Error: " + data.message;
+        }
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Request failed!";
+      }
+    });
+  </script>
+</body>
+</html>
